@@ -31,9 +31,10 @@ public class PhoneBook implements PhoneBookOperations {
 	public boolean removePair(Pair pair) {
 		if (allPairs.contains(pair)) {
 			allPairs.remove(pair);
+			System.out.println("Pair " + pair.getPhone() + "" + pair.getName() + "was removed successfully");
 			return true;
 		}
-		System.err.println("ERROR: Pair not in PhoneBook");
+		System.err.println("ERROR: Pair not in PhoneBook, cant remove");
 		return false;
 	}
 
@@ -57,23 +58,6 @@ public class PhoneBook implements PhoneBookOperations {
 			System.err.println("ERROR: Pair Name not in PhoneBook!");
 			return null;
 		}
-	}
-
-	@Override
-	public String print5TopOutgoingCalls() {
-
-		List<Pair> top5 = allPairs.stream().sorted(Comparator.comparing(Pair::getOutCallsCount).reversed()).limit(5).collect(Collectors.toList());
-		StringBuilder sb = new StringBuilder();
-		top5.forEach(p -> sb
-				.append(p.getName())
-				.append(PAIR_SEPARATOR)
-				.append(p.getPhone())
-				.append(PAIR_SEPARATOR)
-				.append(p.getOutCallsCount())
-				.append("\n"));
-
-		System.out.println(sb);
-		return sb.toString();
 	}
 
 	public Pair getPairByName(String name) {
@@ -114,7 +98,21 @@ public class PhoneBook implements PhoneBookOperations {
 					System.err.println("Cant fetch record with phone: " + phone + " &name: " + name);
 				}
 			});
-		} else System.err.println("File does not exists in: " + path.getFileName());
+		} else {
+			System.err.println("File does not exists in: " + path.getFileName());
+			throw new IOException();
+		}
+	}
+
+	@Override
+	public String print5TopOutgoingCalls() {
+
+		return getTopCallsByTypeAndLimit(Comparator.comparing(Pair::getOutCallsCount), true, 5);
+	}
+
+	@Override
+	public String print5TopIngoingCalls() {
+		return getTopCallsByTypeAndLimit(Comparator.comparing(Pair::getInCallsCount), false, 5);
 	}
 
 	@Override
@@ -130,6 +128,25 @@ public class PhoneBook implements PhoneBookOperations {
 	/*public String printAllPairsSortedBy(Predicate<Pair> predicate){
 		// TODO
 	}*/
+
+	private String getTopCallsByTypeAndLimit(Comparator<Pair> comparing, boolean isOutgoing, int limit) {
+		List<Pair> top5 = allPairs.stream().sorted(comparing.reversed()).limit(limit).collect(Collectors.toList());
+		StringBuilder sb = new StringBuilder();
+		top5.forEach(p -> {
+			sb
+					.append(p.getName())
+					.append(PAIR_SEPARATOR)
+					.append(p.getPhone())
+					.append(PAIR_SEPARATOR);
+			if (isOutgoing) {
+				sb.append(p.getOutCallsCount());
+			} else sb.append(p.getInCallsCount());
+			sb.append("\n");
+		});
+
+		System.out.println(sb);
+		return sb.toString();
+	}
 
 	private Optional<Pair> getPairByPredicate(Predicate<Pair> predicate) {
 		// allPairs.ceiling(predicate); or that if we use TreeSet

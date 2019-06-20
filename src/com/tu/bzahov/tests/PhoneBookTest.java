@@ -169,11 +169,29 @@ class PhoneBookTest {
 				"testPair5 | 0889302415 | 2\n"
 				,testPhoneBook.print5TopOutgoingCalls());
 	}
+	@Test
+	void print5TopIngoingCallsTest() {
+		for(int i = 0;i<6;i++) testPhoneBook.increaseInCallOfPair(allPairs.get(1));
+		for(int i = 0;i<5;i++) testPhoneBook.increaseInCallOfPair(allPairs.get(2));
+		for(int i = 0;i<4;i++) testPhoneBook.increaseInCallOfPair(allPairs.get(3));
+		for(int i = 0;i<3;i++) testPhoneBook.increaseInCallOfPair(allPairs.get(4));
+		for(int i = 0;i<2;i++) testPhoneBook.increaseInCallOfPair(allPairs.get(5));
+		for(int i = 0;i<1;i++) testPhoneBook.increaseInCallOfPair(allPairs.get(6));
+		for(int i = 0;i<1;i++) testPhoneBook.increaseInCallOfPair(allPairs.get(0));
+
+		assertEquals("testPair1 | 0889302411 | 6\n" +
+				"testPair2 | 0889302412 | 5\n" +
+				"testPair3 | 0889302413 | 4\n" +
+				"testPair4 | 0889302414 | 3\n" +
+				"testPair5 | 0889302415 | 2\n"
+				,testPhoneBook.print5TopIngoingCalls());
+	}
 
 	@Test
 	void increaseInCallOfPairTest() {
 		testPhoneBook.increaseInCallOfPair(allPairs.get(0));
-		assertEquals(1,allPairs.get(0).getInCallsCount());
+		testPhoneBook.increaseInCallOfPair(allPairs.get(0));
+		assertEquals(2,allPairs.get(0).getInCallsCount());
 	}
 
 	@Test

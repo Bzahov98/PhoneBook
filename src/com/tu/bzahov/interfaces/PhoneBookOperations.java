@@ -13,7 +13,8 @@ public interface PhoneBookOperations {
 	int increaseInCallOfPair(Pair pair);
 	int increaseOutCallOfPair(Pair pair);
 	String getPhoneByName(String name);
-	String print5TopOutgoingCalls();
 	String printAllPairsSortedByName();
+	String print5TopOutgoingCalls();
+	String print5TopIngoingCalls();
 	void loadAllPairsFromFile(Path path) throws IOException;
 }
